@@ -1,0 +1,17 @@
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" width="720" height="500" font-family="&quot;IBM Plex Sans&quot;, &quot;Segoe UI&quot;, system-ui, -apple-system, sans-serif" font-size="16px"><rect x="0" y="0" width="360" height="250" fill="rgb(244, 245, 246)"/>
+        <rect x="20" y="8" width="320" height="234" rx="4" fill="rgb(227, 229, 230)"/>
+        <rect x="286" y="14" width="48" height="14" rx="3" fill="rgba(42, 120, 214, 0.1)" stroke="rgb(42, 120, 214)"/><text x="294" y="24" font-size="11px" fill="rgb(18, 22, 25)" font-weight="600">+ Share</text>
+        <rect x="48" y="34" width="264" height="200" rx="4" fill="rgb(252, 252, 251)" stroke="rgb(75, 82, 87)"/>
+        <text x="60" y="52" fill="rgb(18, 22, 25)" font-size="11px" font-weight="600">Share your board</text>
+        <rect x="60" y="62" width="160" height="20" rx="3" fill="none" stroke="rgb(75, 82, 87)"/><text x="66" y="76" font-size="11px" fill="rgb(75, 82, 87)">coworker@company.com</text>
+        <rect x="228" y="62" width="72" height="20" rx="3" fill="rgba(42, 120, 214, 0.1)" stroke="rgb(42, 120, 214)"/><text x="264" y="76" text-anchor="middle" font-size="11px" fill="rgb(18, 22, 25)" font-weight="600">Send invite</text>
+        <rect x="60" y="90" width="196" height="18" rx="3" fill="none" stroke="rgb(75, 82, 87)"/><text x="66" y="102" font-size="11px" fill="rgb(75, 82, 87)">Join link: shiptivity.com/join/abc123</text>
+        <rect x="262" y="90" width="38" height="18" rx="3" fill="none" stroke="rgb(75, 82, 87)"/><text x="271" y="102" font-size="11px" fill="rgb(75, 82, 87)">Copy</text>
+        <text x="60" y="128" font-size="11px" fill="rgb(18, 22, 25)" font-weight="600">Members (3)</text>
+        <circle cx="68" cy="140" r="6" fill="none" stroke="rgb(75, 82, 87)"/><text x="80" y="143" font-size="11px" fill="rgb(75, 82, 87)">Dawna Pellegren · joined 12 Feb</text>
+        <circle cx="68" cy="156" r="6" fill="none" stroke="rgb(75, 82, 87)"/><text x="80" y="159" font-size="11px" fill="rgb(75, 82, 87)">Tama Courtois · joined 12 Feb</text>
+        <circle cx="68" cy="172" r="6" fill="none" stroke="rgb(75, 82, 87)"/><text x="80" y="175" font-size="11px" fill="rgb(75, 82, 87)">Nadene Otwell · joined 14 Feb</text>
+        <text x="60" y="196" font-size="11px" fill="rgb(18, 22, 25)" font-weight="600">Pending (1)</text>
+        <text x="60" y="211" font-size="11px" fill="rgb(75, 82, 87)">dispatch@wizallc.com · sent 2 days ago</text><rect x="254" y="200" width="42" height="14" rx="3" fill="none" stroke="rgb(75, 82, 87)"/><text x="262" y="210" font-size="11px" fill="rgb(75, 82, 87)">Resend</text>
+        <text x="60" y="228" font-size="11px" fill="rgb(75, 82, 87)">Board banner: "Working with a dispatcher? Invite them"</text>
+      </svg>

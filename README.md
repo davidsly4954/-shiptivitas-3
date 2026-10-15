@@ -67,3 +67,4 @@ You can start running SQL command on the terminal.
 - `analytics-report.html` is a self-contained report with the two graphs, table views, the SQL, and three feature ideas with wireframes. Open it in any browser.
 - Run the queries with `sqlite3 shiptivity.db < answer.sql` (SQLite 3.25 or newer, for the window functions). The database is not modified by any of them.
 - `graphs/` holds each graph as a standalone image, in SVG (exact) and JPG (screenshot) form: daily active users, status changes per day, status changes per card, and cards by number of status changes.
+- `feature-ideas.pdf` (and `feature-ideas.md`) is the three-ideas document on its own, with the wireframes, for the Forage upload. The sketches are also in `graphs/wireframe-1..3.svg`.
