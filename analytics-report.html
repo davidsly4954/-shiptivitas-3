@@ -180,6 +180,14 @@
     </figure>
     <figure>
       <div class="fig-head">
+        <div class="fig-title">Status changes per card, all 200 cards</div>
+      </div>
+      <div class="chart" id="chart-percard"></div>
+      <figcaption id="cap-percard"></figcaption>
+      <details><summary>Table view: every card</summary><div class="table-wrap" id="table-percard"></div></details>
+    </figure>
+    <figure>
+      <div class="fig-head">
         <div class="fig-title">Cards by number of status changes</div>
       </div>
       <div class="chart" id="chart-hist"></div>
@@ -327,7 +335,7 @@
       <li><b>Before and after are not a controlled experiment.</b> Active users were already growing before the release (1 per day in February, 5.5 per day in May), so some of the jump is trend. The step on the release day itself is far larger than that trend, which is why we still read it as the feature's effect.</li>
       <li><b>The history table has no user id.</b> Moves cannot be attributed to people, so we cannot say which users drive the status changes or whether the most active users are the ones moving cards. That gap is itself worth closing (see idea 2).</li>
       <li><b>Flat patterns.</b> Logins are spread evenly across weekdays and hours of the day, and daily logins do not move with daily card changes (correlation -0.23). Many logins look like checking the board rather than working it.</li>
-      <li><b>Reproducing.</b> Run <code>sqlite3 shiptivity.db &lt; answer.sql</code>, or paste the statements one at a time. The graphs and tables above are drawn from the output of queries 1a, 1c, 2b, 2c, 2d and 2e; the week-by-week table is those daily rows summed per Monday-to-Sunday week, so its first and last rows cover partial weeks. The other figures in the text come from queries 3a to 3f.</li>
+      <li><b>Reproducing.</b> Run <code>sqlite3 shiptivity.db &lt; answer.sql</code>, or paste the statements one at a time. The graphs and tables above are drawn from the output of queries 1a, 1c, 2b, 2c, 2d and 2e (the per-card bars are query 2b sorted by its status_changes column); the week-by-week table is those daily rows summed per Monday-to-Sunday week, so its first and last rows cover partial weeks. The other figures in the text come from queries 3a to 3f.</li>
     </ul>
   </section>
 
@@ -478,6 +486,55 @@ window.DATA = {"daily":[{"day":"2018-02-03","period":"before","daily_active_user
   const peak = D.changesPerDay.reduce((a, b) => b.status_changes > a.status_changes ? b : a);
   document.getElementById('cap-changes').textContent = 'Thin line: status changes recorded that day, all cards together. Blue line: 7-day rolling average. The busiest day was ' + dayLabel(peak.day) + ' with ' + peak.status_changes + ' changes.';
 
+  // ---------- Per-card bars ----------
+  (function () {
+    const rows = [...D.changesPerCard].sort((a, b) => b.status_changes - a.status_changes || a.card_id - b.card_id);
+    const W = 920, H = 300, m = { top: 30, right: 24, bottom: 44, left: 40 };
+    const iw = W - m.left - m.right, ih = H - m.top - m.bottom;
+    const yMax = Math.max(...rows.map(r => r.status_changes)) + 1;
+    const y = v => m.top + ih - (v / yMax) * ih;
+    const bw = iw / rows.length;
+    const svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Bar chart of status changes for each of the 200 cards, sorted from most to fewest' });
+    const grid = el('g', { class: 'grid' });
+    for (let v = 0; v <= yMax; v += 1) {
+      grid.appendChild(el('line', { x1: m.left, x2: m.left + iw, y1: y(v), y2: y(v) }));
+      svg.appendChild(el('text', { x: m.left - 8, y: y(v) + 4, 'text-anchor': 'end' }, [String(v)]));
+    }
+    svg.appendChild(grid);
+    svg.appendChild(el('line', { class: 'axis', x1: m.left, x2: m.left + iw, y1: y(0), y2: y(0) }));
+    const container = document.getElementById('chart-percard');
+    const tip = document.createElement('div'); tip.className = 'tip';
+    rows.forEach((r, i) => {
+      const x0 = m.left + i * bw + 0.5, w = Math.max(bw - 1, 1);
+      if (r.status_changes > 0) {
+        svg.appendChild(el('rect', { class: 'bar', x: x0, y: y(r.status_changes), width: w, height: y(0) - y(r.status_changes), rx: 1 }));
+      }
+      const hit = el('rect', { class: 'hit', x: m.left + i * bw, y: m.top, width: bw, height: ih });
+      hit.addEventListener('mouseenter', () => { tip.innerHTML = '<b>Card ' + r.card_id + ' · ' + r.card_name + '</b><br>' + r.status_changes + ' status change' + (r.status_changes === 1 ? '' : 's') + ' · now ' + r.current_status; tip.style.left = ((x0 + w / 2) / W * 100) + '%'; tip.style.top = (y(r.status_changes) / H * 100) + '%'; tip.style.display = 'block'; });
+      hit.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+      svg.appendChild(hit);
+    });
+    // Card ids above the five most-moved cards, and a label over each long run of equal values.
+    rows.slice(0, 5).forEach((r, i) => {
+      svg.appendChild(el('text', { class: 'ink', x: m.left + i * bw + bw / 2, y: y(r.status_changes) - 5, 'text-anchor': 'middle', 'font-size': 10 }, ['#' + r.card_id]));
+    });
+    let start = 0;
+    while (start < rows.length) {
+      let end = start;
+      while (end + 1 < rows.length && rows[end + 1].status_changes === rows[start].status_changes) end++;
+      const n = end - start + 1, v = rows[start].status_changes;
+      if (n >= 20) {
+        const cx = m.left + (start + n / 2) * bw;
+        svg.appendChild(el('text', { class: 'strong', x: cx, y: y(v) - 8, 'text-anchor': 'middle' }, [n + ' cards' + (v === 0 ? ' never moved' : ' with ' + v + ' change' + (v === 1 ? '' : 's'))]));
+      }
+      start = end + 1;
+    }
+    svg.appendChild(el('text', { x: m.left + iw / 2, y: H - 6, 'text-anchor': 'middle', class: 'ink' }, ['Cards, sorted from most to fewest status changes since the release (hover a bar for the client)']));
+    container.appendChild(svg); container.appendChild(tip);
+    const moved = rows.filter(r => r.status_changes > 0).length;
+    document.getElementById('cap-percard').textContent = 'One bar per card: how many times its status changed since the release (card creation not counted). ' + moved + ' of 200 cards moved at least once; the most-moved card, ' + rows[0].card_name + ' (#' + rows[0].card_id + '), changed status ' + rows[0].status_changes + ' times.';
+  })();
+
   // ---------- Histogram ----------
   (function () {
     const rows = D.histogram;
@@ -550,6 +607,11 @@ window.DATA = {"daily":[{"day":"2018-02-03","period":"before","daily_active_user
     { key: 'from', label: 'Days covered', fmt: (v, w) => rangeLabel(w) }, { key: 'days', label: 'Days', num: true }, { key: 'status_changes', label: 'Status changes', num: true },
     { key: 'started', label: 'To in progress', num: true }, { key: 'completed', label: 'To complete', num: true }, { key: 'back', label: 'Back to backlog', num: true },
   ], weeks);
+  document.getElementById('table-percard').innerHTML = table([
+    { key: 'card_id', label: 'Card', num: true }, { key: 'card_name', label: 'Client', name: true }, { key: 'current_status', label: 'Status now' },
+    { key: 'status_changes', label: 'Status changes', num: true }, { key: 'times_started', label: 'Started', num: true }, { key: 'times_completed', label: 'Completed', num: true },
+    { key: 'sent_back_to_backlog', label: 'Sent back', num: true }, { key: 'reopened', label: 'Reopened', num: true },
+  ], [...D.changesPerCard].sort((a, b) => b.status_changes - a.status_changes || a.card_id - b.card_id));
   document.getElementById('table-top').innerHTML = table([
     { key: 'card_id', label: 'Card', num: true }, { key: 'card_name', label: 'Client', name: true }, { key: 'current_status', label: 'Status now' },
     { key: 'status_changes', label: 'Changes', num: true }, { key: 'times_started', label: 'Started', num: true }, { key: 'times_completed', label: 'Completed', num: true },

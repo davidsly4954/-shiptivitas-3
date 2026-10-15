@@ -66,3 +66,4 @@ You can start running SQL command on the terminal.
 - `answer.sql` holds the queries. Part 1 (1a to 1c): daily active users for every calendar day with a before/after flag and a 7-day average, the two period averages, and a month-by-month view with stickiness. Part 2 (2a to 2e): status changes per card per day, totals per card, the daily series since the release, the distribution of changes per card, and how long cards have sat in each status.
 - `analytics-report.html` is a self-contained report with the two graphs, table views, the SQL, and three feature ideas with wireframes. Open it in any browser.
 - Run the queries with `sqlite3 shiptivity.db < answer.sql` (SQLite 3.25 or newer, for the window functions). The database is not modified by any of them.
+- `graphs/` holds each graph as a standalone image, in SVG (exact) and JPG (screenshot) form: daily active users, status changes per day, status changes per card, and cards by number of status changes.
